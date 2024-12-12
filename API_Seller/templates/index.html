@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Progress Bar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
+</head>
+<body>
+    <div class="mainDiv">
+        <div class="top">
+            <h1>Order Simulator</h1>
+        </div>
+        <div class="mid">
+            <div id="upper">
+                <div id="left">Status: Order sent</div>
+                <div id="right">0%</div>
+            </div>
+            <div class="progress-container" id="progressBarContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+        <div class="bottom">
+            <button class="order-button" id="startButton">Start Order</button>
+        </div>
+    </div>
+    <script>
+        const progressBar = document.getElementById("progressBar");
+        const right = document.getElementById("right");
+        const left = document.getElementById("left");
+        const progressBarContainer = document.getElementById("progressBarContainer");
+        const startButton = document.getElementById("startButton");
+        let progress = 0;
+        let updates = 7; 
+        let interval;
+
+        const statuses = [
+            "Order received by Online shop",
+            "Order sent to carrier",
+            "Carriere returned order with QR code",
+            "Order sent for Pickup",
+            "Order moving through carrier",
+            "Order in delivery",
+            "Order delivered"
+        ];
+
+        function updateProgressBar() {
+            if (progress >= 100 || updates === 0) {
+                clearInterval(progressInterval);
+                return;
+            } else {
+                const randomIncrement = Math.floor(Math.random() * (15 - 13 + 1)) + 15; // Random increment between 16 and 20
+
+                progress += randomIncrement;
+                if (progress > 100) progress = 100;
+
+                progressBar.style.width = progress + "%";
+                right.textContent = progress + "%";
+
+                if (updates > 0) {
+                    const statusIndex = 7 - updates; 
+                   left.textContent = "Status: "+ statuses[statusIndex];
+                }
+
+                updates--;
+                
+                if (updates === 0) {
+                    progress = 100;
+                    progressBar.style.width = progress + "%";
+                    right.textContent = progress + "%";
+                }
+            }
+        }
+
+        startButton.addEventListener("click", () => {
+            let currentHeight = 0;
+            const targetHeight = 40;
+            const mid = document.getElementsByClassName("mid")[0];
+            const heightInterval = setInterval(() => {
+                if (currentHeight < targetHeight) {
+                    currentHeight += 1;
+                    progressBarContainer.style.height = currentHeight + "px";
+                } else {
+                    clearInterval(heightInterval);
+                }
+            }, 5);
+            const upper = document.getElementById("upper");
+            upper.style.visibility = "visible";
+            interval = Math.floor(Math.random() * (2000 - 1000 + 1)) + 2000;
+            const progressInterval = setInterval(updateProgressBar, interval);
+        });
+    </script>
+</body>
+</html>
